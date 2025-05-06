@@ -1,10 +1,14 @@
+> [!CAUTION]
+> Not ready for production use.
+
 > [!NOTE]
 > This extension aims to have similar functionality as described in this no longer maintained GH CLI [Extension](https://docs.github.com/en/codespaces/developing-in-a-codespace/connecting-to-a-private-network#using-the-github-cli-extension-to-access-remote-resources):
 >
 > `.. allows you to create a bridge between a codespace and your local machine, so that the codespace can access any remote resource that is accessible from your machine. The codespace uses your local machine as a network gateway to reach those resources.`
 
 # cs-vpn
-### Codespace VPN
+### GitHub Cli Extension: Gateway-Proxy/VPN for Codespaces
+<br>
 
 
 Route select internet traffic through GitHub Codespaces using `sshuttle`, and optionally set up SSH reverse tunnels so the Codespace can access services on your local machine.
