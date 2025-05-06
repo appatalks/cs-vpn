@@ -2,7 +2,7 @@
 set -e
 
 print_usage() {
-  echo "Usage: gh codespaces proxy <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
+  echo "Usage: gh cs-proxy <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
 }
 
 # Ensure subcommand
