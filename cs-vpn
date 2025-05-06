@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -e
+
+print_usage() {
+  echo "Usage: gh codespaces proxy <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
+}
+
+# Ensure subcommand
+if [[ "${1}" != "proxy" ]]; then
+  print_usage
+  exit 1
+fi
+shift
+
+# Codespace name
+if [[ -z "$1" ]]; then
+  print_usage
+  exit 1
+fi
+CODESPACE="$1"
+shift
+
+# Defaults
+ROUTES=()
+USE_DNS=false
+BRIDGE=false
+
+# Parse flags
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    --all)
+      ROUTES+=("0.0.0.0/0");;
+    --only-443)
+      ROUTES+=("0.0.0.0/0:443");;
+    --dns)
+      USE_DNS=true;;
+    --domains)
+      shift
+      for domain in $1; do
+        ROUTES+=("${domain}:443")
+      done
+      ;;
+    --gateway)
+      BRIDGE=true;;
+    -h|--help)
+      print_usage
+      exit 0;;
+    *)
+      echo "Unknown option: $1"
+      print_usage
+      exit 1;;
+  esac
+  shift
+done
+
+# Ensure SSH config for Codespace
+if ! grep -q "$CODESPACE" ~/.ssh/config 2>/dev/null; then
+  gh codespace ssh --codespace "$CODESPACE" --config >> ~/.ssh/config
+fi
+
+# Start sshuttle if routes defined
+if [[ ${#ROUTES[@]} -gt 0 ]]; then
+  CMD=(sshuttle -r "$CODESPACE")
+  [[ "$USE_DNS" == true ]] && CMD+=(--dns)
+  for r in "${ROUTES[@]}"; do CMD+=("$r"); done
+  echo "Starting sshuttle: ${CMD[*]}"
+  "${CMD[@]}" &
+  SSHUTTLE_PID=$!
+fi
+
+# Setup reverse SSH tunnel if requested
+if [[ "$BRIDGE" == true ]]; then
+  LOCAL_PORT=${LOCAL_PORT:-8000}
+  REMOTE_PORT=${REMOTE_PORT:-9000}
+  echo "[INFO] Reverse tunnel: Codespace localhost:${REMOTE_PORT} → your localhost:${LOCAL_PORT}"
+  ssh -f -N -R "${REMOTE_PORT}:localhost:${LOCAL_PORT}" "$CODESPACE"
+fi
+
+# Wait on sshuttle
+[[ -n "$SSHUTTLE_PID" ]] && wait "$SSHUTTLE_PID"
