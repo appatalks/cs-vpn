@@ -16,14 +16,14 @@ Route select internet traffic through GitHub Codespaces using `sshuttle`, and op
 ## Installation
 
 ```bash
-gh extension install appatalks/gh-cs-vpn
+gh extension install appatalks/gh-cs-proxy
 chmod +x ~/.local/share/gh/extensions/gh-cs-proxy/gh-cs-proxy
 ```
 
 ## Usage
 
 ```bash
-gh cs-proxy <codespace-name> [flags]
+gh cs-proxy connect <codespace-name> [flags]
 ```
 
 ## Flags
@@ -44,21 +44,21 @@ gh cs-proxy <codespace-name> [flags]
 
 1. Route only TLS + DNS:
   ```bash
-  gh cs-proxy my-codespace --only-443 --dns
+  gh cs-proxy connect my-codespace --only-443 --dns
   ```
 
 2. Route GitHub domains + set up local gateway:
   ```bash
-  gh cs-proxy my-codespace --domains "github.com api.github.com" --gateway
+  gh cs-proxy connect my-codespace --domains "github.com api.github.com" --gateway
   ```
 
 3. Route all traffic:
   ```bash
-  gh cs-proxy my-codespace --all
+  gh cs-proxy connect my-codespace --all
   ```
 
 4. Custom local port mapping (use env vars before running):
   ```bash
   export LOCAL_PORT=3000 REMOTE_PORT=9001
-  gh cs-proxy my-codespace --gateway
+  gh cs-proxy connect my-codespace --gateway
   ```
