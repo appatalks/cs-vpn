@@ -6,8 +6,8 @@
 >
 > `.. allows you to create a bridge between a codespace and your local machine, so that the codespace can access any remote resource that is accessible from your machine. The codespace uses your local machine as a network gateway to reach those resources.`
 
-# cs-vpn
-### GitHub Cli Extension: Gateway-Proxy/VPN for Codespaces
+# gh-cs-proxy
+### GitHub Cli Extension: Proxy-Gateway & VPN for Codespaces
 <br>
 
 
@@ -16,7 +16,7 @@ Route select internet traffic through GitHub Codespaces using `sshuttle`, and op
 ## Installation
 
 ```bash
-gh extension install appatalks/cs-vpn
+gh extension install appatalks/gh-cs-vpn
 ```
 
 ## Usage
