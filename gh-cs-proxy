@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
-# Trap exits and interrupts to clean up background jobs
+# Trap SIGINT and SIGTERM to clean up and exit
 cleanup() {
-  echo "\n[INFO] Cleaning up..."
+  echo -e "
+[INFO] Cleaning up..."
   # Kill sshuttle if running
-  jobs -p | xargs -r kill
+  if [[ -n "$SSHUTTLE_PID" ]]; then
+    kill "$SSHUTTLE_PID"
+  fi
   exit
 }
-trap cleanup SIGINT SIGTERM EXIT
+trap cleanup SIGINT SIGTERM
 
 print_usage() {
   echo "Usage: gh cs-proxy connect <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
@@ -74,6 +77,7 @@ if [[ ${#ROUTES[@]} -gt 0 ]]; then
   for r in "${ROUTES[@]}"; do CMD+=("$r"); done
   echo "Starting sshuttle: ${CMD[*]}"
   "${CMD[@]}" &
+  SSHUTTLE_PID=$!
 fi
 
 # Setup reverse SSH tunnel if requested
@@ -82,4 +86,15 @@ if [[ "$BRIDGE" == true ]]; then
   REMOTE_PORT=${REMOTE_PORT:-9000}
   echo "[INFO] Reverse tunnel: Codespace localhost:${REMOTE_PORT} → your localhost:${LOCAL_PORT}"
   ssh -f -N -R "${REMOTE_PORT}:localhost:${LOCAL_PORT}" "cs.$CODESPACE.main"
+fi
+
+# Wait for sshuttle process if started, else wait until killed
+if [[ -n "$SSHUTTLE_PID" ]]; then
+  wait "$SSHUTTLE_PID"
+else
+  # No sshuttle routes: keep script alive until Ctrl+C
+  echo "[INFO] Proxy active. Press Ctrl+C to exit."
+  while true; do
+    sleep 60
+  done
 fi
