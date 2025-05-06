@@ -1,17 +1,20 @@
-> [!CAUTION]
-> Not ready for production use.
+# gh-cs-proxy
+### GitHub Cli Extension: Proxy-Gateway & VPN for Codespaces <p><p>
 
+Send chosen internet traffic through your GitHub Codespace with [`sshuttle`](https://github.com/sshuttle/sshuttle/), and optionally open a reverse SSH tunnel so the Codespace can reach services running on your local machine.
+
+
+<img title="Gateway" alt="--gateway" src="img/gh-cs-proxy-gateway.png"> <p> Using with: `$ gh cs-proxy connect my-codespace --gateway`
+
+<br>
+ 
 > [!NOTE]
 > This extension aims to have similar functionality as described in this no longer maintained GH CLI [Extension](https://docs.github.com/en/codespaces/developing-in-a-codespace/connecting-to-a-private-network#using-the-github-cli-extension-to-access-remote-resources):
 >
 > `.. allows you to create a bridge between a codespace and your local machine, so that the codespace can access any remote resource that is accessible from your machine. The codespace uses your local machine as a network gateway to reach those resources.`
 
-# gh-cs-proxy
-### GitHub Cli Extension: Proxy-Gateway & VPN for Codespaces
-<br>
-
-
-Route select internet traffic through GitHub Codespaces using `sshuttle`, and optionally set up SSH reverse tunnels so the Codespace can access services on your local machine.
+> [!NOTE]
+> Not reviewed for production use.
 
 ## Installation
 
@@ -57,8 +60,11 @@ gh cs-proxy connect <codespace-name> [flags]
   gh cs-proxy connect my-codespace --all
   ```
 
-4. Custom local port mapping (use env vars before running):
+4. Custom local port mapping (optionally, use env vars before running):
   ```bash
   export LOCAL_PORT=3000 REMOTE_PORT=9001
   gh cs-proxy connect my-codespace --gateway
   ```
+<br>
+
+ ###### `Appa's Thoughts: Epic.`
