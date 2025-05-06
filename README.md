@@ -6,7 +6,7 @@
 >
 > `.. allows you to create a bridge between a codespace and your local machine, so that the codespace can access any remote resource that is accessible from your machine. The codespace uses your local machine as a network gateway to reach those resources.`
 
-# cs-vpn
+# gh-cs-vpn
 ### GitHub Cli Extension: Gateway-Proxy/VPN for Codespaces
 <br>
 
