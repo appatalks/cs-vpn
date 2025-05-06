@@ -16,7 +16,7 @@ Route select internet traffic through GitHub Codespaces using `sshuttle`, and op
 ## Installation
 
 ```bash
-gh extension install appatalks/cs-vpn
+gh extension install appatalks/gh-cs-vpn
 ```
 
 ## Usage
