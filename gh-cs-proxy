@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
+# Trap exits and interrupts to clean up background jobs
+cleanup() {
+  echo "\n[INFO] Cleaning up..."
+  # Kill sshuttle if running
+  jobs -p | xargs -r kill
+  exit
+}
+trap cleanup SIGINT SIGTERM EXIT
+
 print_usage() {
   echo "Usage: gh cs-proxy connect <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
 }
@@ -65,7 +74,6 @@ if [[ ${#ROUTES[@]} -gt 0 ]]; then
   for r in "${ROUTES[@]}"; do CMD+=("$r"); done
   echo "Starting sshuttle: ${CMD[*]}"
   "${CMD[@]}" &
-  SSHUTTLE_PID=$!
 fi
 
 # Setup reverse SSH tunnel if requested
@@ -75,6 +83,3 @@ if [[ "$BRIDGE" == true ]]; then
   echo "[INFO] Reverse tunnel: Codespace localhost:${REMOTE_PORT} → your localhost:${LOCAL_PORT}"
   ssh -f -N -R "${REMOTE_PORT}:localhost:${LOCAL_PORT}" "cs.$CODESPACE.main"
 fi
-
-# Wait on sshuttle
-[[ -n "$SSHUTTLE_PID" ]] && wait "$SSHUTTLE_PID"
