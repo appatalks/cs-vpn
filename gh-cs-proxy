@@ -2,11 +2,11 @@
 set -e
 
 print_usage() {
-  echo "Usage: gh cs-proxy <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
+  echo "Usage: gh cs-proxy connect <codespace-name> [--all] [--dns] [--only-443] [--domains \"domain1 domain2\"] [--gateway]"
 }
 
 # Ensure subcommand
-if [[ "${1}" != "proxy" ]]; then
+if [[ "${1}" != "connect" ]]; then
   print_usage
   exit 1
 fi
@@ -60,7 +60,7 @@ fi
 
 # Start sshuttle if routes defined
 if [[ ${#ROUTES[@]} -gt 0 ]]; then
-  CMD=(sshuttle -r "$CODESPACE")
+  CMD=(sshuttle -r "cs.$CODESPACE.main")
   [[ "$USE_DNS" == true ]] && CMD+=(--dns)
   for r in "${ROUTES[@]}"; do CMD+=("$r"); done
   echo "Starting sshuttle: ${CMD[*]}"
@@ -73,7 +73,7 @@ if [[ "$BRIDGE" == true ]]; then
   LOCAL_PORT=${LOCAL_PORT:-8000}
   REMOTE_PORT=${REMOTE_PORT:-9000}
   echo "[INFO] Reverse tunnel: Codespace localhost:${REMOTE_PORT} → your localhost:${LOCAL_PORT}"
-  ssh -f -N -R "${REMOTE_PORT}:localhost:${LOCAL_PORT}" "$CODESPACE"
+  ssh -f -N -R "${REMOTE_PORT}:localhost:${LOCAL_PORT}" "cs.$CODESPACE.main"
 fi
 
 # Wait on sshuttle
